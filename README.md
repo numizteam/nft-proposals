@@ -1,7 +1,4 @@
 # NFT standard proposals
-
-
-
 ## Links
 * [Itgold tnft](https://github.com/itgoldio/everscale-tnft)
 * [Itgold tnft interfaces](https://github.com/itgoldio/everscale-tnft-interfaces)
@@ -115,3 +112,9 @@
 ## Принципиальные вопросы
 * Приемлим ли токен у которого нет Storage?
 * Какие индесы использовать для быстрого поиска контрактов? Ончейн при помощи `Index` контрактов, как это реализовано в TNFT, или офчейн, как это реализовано в graphQL?
+
+
+
+## Визуализация взаимодействия между контрактами
+Контент показывает разные механики взаимодействия контрактов, в частности реализацию numiz и itgold, а также предложения по улучшению. Контент требует устного пояснения
+[https://miro.com/welcomeonboard/R3hHSGtaRFlyTzFoNE1aeUVmRUVpUWR0bkg2MnBYTHBxWEZLME1HRndFWk1TVkhybHFxZmc3TnpMY1dnWkVoa3wzNDU4NzY0NTE2OTMyMjQ5NDg1?invite_link_id=387103488610](https://miro.com/welcomeonboard/R3hHSGtaRFlyTzFoNE1aeUVmRUVpUWR0bkg2MnBYTHBxWEZLME1HRndFWk1TVkhybHFxZmc3TnpMY1dnWkVoa3wzNDU4NzY0NTE2OTMyMjQ5NDg1?invite_link_id=387103488610)
