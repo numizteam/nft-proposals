@@ -62,7 +62,7 @@
 Реализация itgold использует публичный ключ для изменения праметров контракта. [Пример](https://github.com/itgoldio/everscale-tnft/blob/master/src/NftRoot.sol#L103) 
 
 **Предложение**
-Заменить использование публичного ключа внутренние вызовы. Это позволит вызывать сервисные методы, например, сеттеры NftRoot контракта, других контрактов. Это позволить управлять контрактом через мультисиг, DAO и прочие контракты.
+Заменить использование публичного ключа на внутренние вызовы. Это позволит вызывать сервисные методы, например, сеттеры NftRoot контракта. Это позволить управлять контрактом через мультисиг, DAO и прочие контракты.
 
 ### 7. Добавление в метод `Data.transferOwnership()` параметов `address notificationReceiver`, `TvmCell payload`
 [https://github.com/tonlabs/True-NFT/blob/main/1.0/components/true-nft-content/src/Data.sol#L44](https://github.com/itgoldio/everscale-tnft/blob/master/src/Data.sol#L43)
@@ -71,8 +71,6 @@
 ### 8. Добавление в метод `Index.destruct()` параметр `address gasReceiver`
 [https://github.com/tonlabs/True-NFT/blob/main/1.0/components/true-nft-content/src/Index.sol#L41](https://github.com/tonlabs/True-NFT/blob/main/1.0/components/true-nft-content/src/Index.sol#L41)
 Сделать возможность получать деньги после уничтожения индекса на любой адрес, а не только на контракт Data. В конечном итоге с контракта Data их также придётся выводить.
-
-В о
 
 ### 9. Вызов `Index.destruct()` с указанием `msg.value`
 [Пример вызова](https://github.com/tonlabs/True-NFT/blob/main/1.0/components/true-nft-content/src/Data.sol#L49)
