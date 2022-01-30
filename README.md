@@ -14,23 +14,23 @@
 * [https://github.com/itgoldio/everscale-tnft#class-diagram](https://github.com/itgoldio/everscale-tnft#class-diagram)
 * [https://github.com/itgoldio/everscale-tnft/blob/master/src/NftRoot.sol#L73](https://github.com/itgoldio/everscale-tnft/blob/master/src/NftRoot.sol#L73)
 
-В оригинальной реализации TNFT индекс BaseIndex деплоится отдельно о создания NftRoot
+В оригинальной реализации TNFT BasisIndex деплоится отдельно о создания NftRoot
 ![init.tnft.png](img/init.tnft.png)
 
 #### Предложение
-Мы предлагаем деплоить индекс из конструктора NftRoot. Это позволит создавать NftRoot одно транзакцией от пользователя. Эта решение не очень важно, когда NftRoot контракт один, и его деплоит администратор, но становится актуально, когда пользователь может задеплоить множество рутов, какждй из которых создаётся под отдельную коллекцию.
+Деплоить индекс из конструктора NftRoot. Это позволит создавать NftRoot одной транзакцией пользователя. Это решение не очень важно, когда NftRoot контракт один, и его деплоит администратор, но становится актуально, когда пользователь может задеплоить множество рутов, какждый из которых создаётся под отдельную коллекцию
 ![init.numiz.png](img/init.numiz.png)
 
 ### 2. Минтинг токенов и использование Storage
 Ниже схема минтинга токенов смартконтракта от компании itgold
 ![minting.itgold.png](img/minting.itgold.png)
-В данной схеме не используется контракт Storage, что не позволяет хранить медиа-контент в блокчейне. Этот подход не является отказоустойчивым. При удалении файла по внешней ссылке, в том числе из IPFS, пользователь не может увидеть даже превью контента, которым обладает.
+В данной схеме не используется контракт Storage, что не позволяет хранить медиа-контент в блокчейне. Этот подход не является отказоустойчивым. При удалении файла по внешней ссылке, в том числе из IPFS, пользователь не может увидеть даже превью контента, которым обладает
 
 Ниже показана сжема минтинга токенов с использование контракта Storage. Создание токена происходит несколько этапов:
 1. Клиентское приложение создаёт временную пару ключей.
-2. Создаются контракты. Одним из них является Storage, методы которого можно вызывать временным ключом. На Storage оставляется некоторое количество денег для оплаты storage fee. 
+2. Создаются контракты. Одним из них является Storage, методы которого можно вызывать временным ключом. На контракте Storage отправляется некоторое количество денег для оплаты storage fee. 
 ![minting.numiz.1.png](img/minting.numiz.1.png)
-3. Клиентское приложение вызывает один или несколько раз метод `fillContent()` контракта Storage, используя временные ключи.
+3. Клиентское приложение вызывает один или несколько раз метод `fillContent()` контракта Storage, используя временные ключи
 4. Транзакция, загружающая последнюю часть контента, вызывает метод `onFillComplete()` контракта Data
 5. Деплоятся индесы, и минтинг считается завершённым
 ![minting.numiz.2.png](img/minting.numiz.2.png)
@@ -39,54 +39,55 @@
 Зачем нужна защита от отправления токена на нулевой адрес?
 * [https://github.com/itgoldio/everscale-tnft#data](https://github.com/itgoldio/everscale-tnft#data)
 
-#### Предложение
+#### Предложениея
 Если защита всё таки нужна, то вместо `addrTo != address(0)` лушче использовать `addrTo.value != 0`, так как это защитит от оправки на нулевой адрес -1 воркчейна
 
 ### 4. getInfoResponsible
 [Цитата](https://github.com/itgoldio/everscale-tnft#data) : "Добавлена функция getInfoResponsible для получения информации о nft из других контрактов"
 
-#### Предложения:
-Поддерживаем изменение, но есть предложения по улучшению.
-* Переименовать метод `getInfoResponsible()` в `getInfo()`, а старый метод `getInfo()` удалить, так как он полностью заменяют друг друга
+#### Предложения
+Поддерживаем изменение, но есть предложения по улучшению
+* Переименовать метод `getInfoResponsible()` в `getInfo()`, а старый метод `getInfo()` удалить, так как они полностью заменяют друг друга
 * Добавить в метод `getInfo()` входящий параметр `TvmCell payload`, который он же будет возвращать в выходных паарметрах. Это нужно для того, чтобы другие контракты могли пользоваться этим методом когда нужно пробрасывать какие-то дополнительные данные.
 
-### 5. Добавление событий tokenWasMinted и ownershipTransferred
+### 5. Добавление событий `TokenWasMinted` и `OwnershipTransferred`
 [Цитата](https://github.com/itgoldio/everscale-tnft#data): "Добавлены 2 ивента: tokenWasMinted и ownershipTransferred"
 
 #### Предложение
 Поддерживаем изменение, но есть маленькое предложение. Именовать названия событий с большой буквы, исходя из стиля в документации [TON-Solidity](https://github.com/tonlabs/TON-Solidity-Compiler/blob/master/API.md#emit) и [Ethereum](https://docs.soliditylang.org/en/v0.8.11/contracts.html#events)  
   
 ### 6. Public key vs Internal owner
-Реализация itgold использует публичный ключ для изменения праметров контракта. [Пример](https://github.com/itgoldio/everscale-tnft/blob/master/src/NftRoot.sol#L103)  
+Реализация itgold использует публичный ключ для вызовов методов контрактов. [Пример](https://github.com/itgoldio/everscale-tnft/blob/master/src/NftRoot.sol#L103)  
   
 #### Предложение  
-Заменить использование публичного ключа на внутренние вызовы. Это позволит вызывать сервисные методы, например, сеттеры NftRoot контракта. Это позволить управлять контрактом через мультисиг, DAO и прочие контракты.
+Заменить использование публичного ключа на внутренние вызовы. Это позволит вызывать сервисные методы, например, сеттеры NftRoot, контракта из других контрактов. Это позволить управлять токенами через мультисиг, DAO и прочие контракты.
 
-### 7. Добавление в метод `Data.transferOwnership()` параметов `address notificationReceiver`, `TvmCell payload`
+### 7. Добавление в метод `transferOwnership()` контракта Data параметов `address notificationReceiver`, `TvmCell payload`
 * [https://github.com/tonlabs/True-NFT/blob/main/1.0/components/true-nft-content/src/Data.sol#L44](https://github.com/itgoldio/everscale-tnft/blob/master/src/Data.sol#L43)
 
-Это необходимо для оповещения других контрактов о передачи прав. Это нужно для on-chain торговли
+Это необходимо для оповещения других контрактов о передаче прав. Это нужно для on-chain торговли
 
-### 8. Добавление в метод `Index.destruct()` параметр `address gasReceiver`
+### 8. Добавление в метод `destruct()` контракта Index параметра `address gasReceiver`
 #### Предложение
-Необходимо возможность получать деньги после уничтожения индекса на любой адрес, а не только на контракт Data.
-* * [https://github.com/tonlabs/True-NFT/blob/main/1.0/components/true-nft-content/src/Index.sol#L41](https://github.com/tonlabs/True-NFT/blob/main/1.0/components/true-nft-content/src/Index.sol#L41)
+Необходимо добавить возможность получать деньги после уничтожения индекса на любой адрес, а не только на контракт Data
+* [https://github.com/tonlabs/True-NFT/blob/main/1.0/components/true-nft-content/src/Index.sol#L41](https://github.com/tonlabs/True-NFT/blob/main/1.0/components/true-nft-content/src/Index.sol#L41)
 
-В конечном итоге с контракта Data их также придётся выводить. Ниже примеры обновления индексов при вызове метода `transferOwnership()` контракта Data
+В конечном итоге с контракта Data деньги также придётся выводить. Ниже примеры обновления индексов при вызове метода `transferOwnership()` контракта Data
 1. Истарые индексы:
 ![transfer.tnft.png](img/transfer.tnft.png)
 2. Новые индексы
 ![transfer.numiz.png](img/transfer.numiz.png)
 
-### 9. Вызов `Index.destruct()` с указанием `msg.value`
+### 9. Вызов `destruct()` контракта Index с указанием `msg.value`
 [Пример вызова](https://github.com/tonlabs/True-NFT/blob/main/1.0/components/true-nft-content/src/Data.sol#L49)
-При вызове `Index.destruct()` на балансе может быть недостаточно средств для его уничтожения из-за изменения стоимости газа и списания storage fee
+При вызове метода `destruct()` контракта Index на балансе может быть недостаточно средств для его уничтожения из-за изменения стоимости газа или списания storage fee
 
 #### Предложение
-Добавить параметр `uint128 value` в метод `destruct()` контракта Index. Значение `value`, передаваемое в метод `destruct()` не должно быть захордкожено, а должно задаваться изменяемым параметром или передаваться извне.
+Добавить параметр `uint128 value` в метод `destruct()` контракта Index. Значение `value`, передаваемое в метод `destruct()`, не должно быть захордкожено, а должно задаваться изменяемым параметром или передаваться извне
 
 ### 10. Возвращение остатоков от транзакции
-Предложение не хранить остатки от транзакций в Data и NftRoot, а возращать остатки на кошелёк, указанный пользователем во всех методах. Это позвлит не лочить деньги на контрактах, а также отказаться от методов, вроде, `withdraw()`. Примеры методов, которые не возвращают деньги:
+#### Предложение
+Не хранить остатки от транзакций в Data и NftRoot, а возращать остатки на кошелёк, который может указать пользователь. Это позволит не лочить деньги на контрактах, а также отказаться от методов, вроде, `withdraw()`. Примеры методов, которые не возвращают деньги:
 * [https://github.com/tonlabs/True-NFT/blob/main/1.0/components/true-nft-content/src/Data.sol#L44](https://github.com/tonlabs/True-NFT/blob/main/1.0/components/true-nft-content/src/Data.sol#L44)
 * [https://github.com/itgoldio/everscale-tnft/blob/master/src/Data.sol#L22](https://github.com/itgoldio/everscale-tnft/blob/master/src/Data.sol#L22)
 
