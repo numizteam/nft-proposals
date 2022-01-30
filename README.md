@@ -72,7 +72,7 @@
 Необходимо возможность получать деньги после уничтожения индекса на любой адрес, а не только на контракт Data.
 * * [https://github.com/tonlabs/True-NFT/blob/main/1.0/components/true-nft-content/src/Index.sol#L41](https://github.com/tonlabs/True-NFT/blob/main/1.0/components/true-nft-content/src/Index.sol#L41)
 
-В конечном итоге с контракта Data их также придётся выводить. Ниже примеры обновления индексов при вызове метода `transferOwnership()` контракта Data.
+В конечном итоге с контракта Data их также придётся выводить. Ниже примеры обновления индексов при вызове метода `transferOwnership()` контракта Data
 1. Истарые индексы:
 ![transfer.tnft.png](img/transfer.tnft.png)
 2. Новые индексы
@@ -80,7 +80,7 @@
 
 ### 9. Вызов `Index.destruct()` с указанием `msg.value`
 [Пример вызова](https://github.com/tonlabs/True-NFT/blob/main/1.0/components/true-nft-content/src/Data.sol#L49)
-При вызове `Index.destruct()` на балансе может быть недостаточно средств для его уничтожения из-за изменения стоимости газа и списания storage fee.
+При вызове `Index.destruct()` на балансе может быть недостаточно средств для его уничтожения из-за изменения стоимости газа и списания storage fee
 
 #### Предложение
 Добавить параметр `uint128 value` в метод `destruct()` контракта Index. Значение `value`, передаваемое в метод `destruct()` не должно быть захордкожено, а должно задаваться изменяемым параметром или передаваться извне.
@@ -99,25 +99,24 @@
 ### 11. Передавать `TvmCell payload` из контракта `Data` в `Sell` контракт при создании последнего 
 `payload` может содержать в себе, как проценты royalty создателя токена, так и дополнительную информацию о себе, которая может влиять на логику работы `Sell` контракта.
 
-
-
 ## Ошибки в коде
 ### 1. `deployIndexBasis()`
-Баг в [deployIndexBasis]([https://github.com/itgoldio/everscale-tnft/blob/master/src/NftRoot.sol#L73](https://github.com/itgoldio/everscale-tnft/blob/master/src/NftRoot.sol#L73)). Метод не работает. Пропущен tvm.accept(). Этот метод можно вызвать только с правильным публичным ключом. Публичный ключ есть только у external message. External message не имеет message.value, а tvm.accept() не вызывается.
+* [deployIndexBasis](https://github.com/itgoldio/everscale-tnft/blob/master/src/NftRoot.sol#L73)
+
+Метод не работает. Пропущен tvm.accept(). Этот метод можно вызвать только с правильным публичным ключом. Публичный ключ есть только у external message. External message не имеет message.value, а tvm.accept() не вызывается.
 
 ### 2. Перепутаны названия переменных в методе `redeployIndex()`
-[https://github.com/itgoldio/everscale-tnft/blob/master/src/Data.sol#L77](https://github.com/itgoldio/everscale-tnft/blob/master/src/Data.sol#L77])  
-Эта же опечка имеетеся в TNFT:
-* [v1.0](https://github.com/tonlabs/True-NFT/blob/main/1.0/components/true-nft-content/src/Data.sol#L50)
-* [v2.0](https://github.com/tonlabs/True-NFT/blob/main/src/Data.sol#L156)
+* [https://github.com/itgoldio/everscale-tnft/blob/master/src/Data.sol#L77](https://github.com/itgoldio/everscale-tnft/blob/master/src/Data.sol#L77])
+* [TNFT v1.0](https://github.com/tonlabs/True-NFT/blob/main/1.0/components/true-nft-content/src/Data.sol#L50)
+* [TNFT v2.0](https://github.com/tonlabs/True-NFT/blob/main/src/Data.sol#L156)
 
 ### 3. Обновление индексов
 [Цитата](https://github.com/itgoldio/everscale-tnft#data): "Если нам нужно изменить Index контракт - нам нужно передеплоивать Data контракты т.к. в них не заложены возможности установки нового кода index и передеплоивания его."
+* [https://github.com/itgoldio/everscale-tnft/blob/master/src/Data.sol#L72](https://github.com/itgoldio/everscale-tnft/blob/master/src/Data.sol#L72).
 
-Текущая реализация решения этой проблемы не работает. [https://github.com/itgoldio/everscale-tnft/blob/master/src/Data.sol#L72](https://github.com/itgoldio/everscale-tnft/blob/master/src/Data.sol#L72).
-Если обновить код Index, и вызвать после этот метод `redeployIndex()`, то он не удалит старые индексы. Причина: код Index конракта будет уже новый, у не получится зарезолвить адреса старых Index конрактов, чтобы вызвать у них метод `destruct()`.
+Текущая реализация решения этой проблемы не работает.  Если обновить код Index, и вызвать после этот метод `redeployIndex()`, то он не удалит старые индексы. Причина: код Index конракта будет уже новый, у не получится зарезолвить адреса старых Index конрактов, чтобы вызвать у них метод `destruct()`.
 
-**Предложение**
+#### Предложение
 При вызове метода `setIndexCode()` удалять старые индексы и создавать новые
 
 
