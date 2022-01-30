@@ -9,24 +9,32 @@
 
 ## Комментарии и предложения к написанному коду
 ### 1. deployIndexBasis
+**Проблема**
 Почему deployIndexBasis() в контракте NftRoot происходит отдельно от вызова конструктора? Юзкейсы?
 [https://github.com/itgoldio/everscale-tnft#class-diagram](https://github.com/itgoldio/everscale-tnft#class-diagram)
 [https://github.com/itgoldio/everscale-tnft/blob/master/src/NftRoot.sol#L73](https://github.com/itgoldio/everscale-tnft/blob/master/src/NftRoot.sol#L73)
 
-**Предложение**
-Деплоить IndexBasis из конструктора
+В оригинальной реализации TNFT индекс BaseIndex деплоится отдельно о создания NftRoot
+![init.itgold.png](img/init.itgold.png)
 
-**Юзкейс**
-Пользователь может создавать свои коллекции, под каждую из которых деплоится NftRoot
+**Предложение**  
+Мы предлагаем деплоить индекс из конструктора NftRoot. Это позволит создавать NftRoot одно транзакцией от пользователя. Эта решение не очень важно, когда NftRoot контракт один, и его деплоит администратор, но становится актуально, когда пользователь может задеплоить множество рутов, какждй из которых создаётся под отдельную коллекцию.
+![init.numiz.png](img/init.numiz.png)
 
-**Плюс**
-Требуется одна транзакция вместо двух
+### 2. Минтинг токенов и использование Storage
+Ниже схема минтинга токенов смартконтракта от компании itgold
+![minting.itgold.png](img/minting.itgold.png)
+В данной схеме не используется контракт Storage, что не позволяет хранить медиа-контент в блокчейне. Этот подход не является отказоустойчивым. При удалении файла по внешней ссылке, в том числе из IPFS, пользователь не может увидеть даже превью контента, которым обладает.
 
-### 2. Момент деплоя Index из контракта Data
-В какой момент деплоятся контракты Index из контракта Data? Другими словами, что считать моментом создания токена?
-Пример создания токена в TrueNFT:
-[https://github.com/tonlabs/True-NFT/blob/main/1.0/components/true-nft-content/src/Data.sol#L39](https://github.com/tonlabs/True-NFT/blob/main/1.0/components/true-nft-content/src/Data.sol#L39). 
-Токен считается созданым только тогда, когда загружены все данные в Storage контракт. Только после этого деплоятся Index контракты
+Ниже показана сжема минтинга токенов с использование контракта Storage. Создание токена происходит несколько этапов:
+1. Клиентское приложение создаёт временную пару ключей.
+2. Создаются контракты. Одним из них является Storage, методы которого можно вызывать временным ключом. На Storage оставляется некоторое количество денег для оплаты storage fee. 
+![minting.numiz.1.png](img/minting.numiz.1.png)
+
+3. Клиентское приложение вызывает один или несколько раз метод `fillContent()` контракта Storage, используя временные ключи.
+4. Транзакция, загружающая последнюю часть контента, вызывает метод `onFillComplete()` контракта Data
+5. Деплоятся индесы, и минтинг считается завершённым
+![minting.numiz.2.png](img/minting.numiz.2.png)
 
 ### 3. Отправка на нулевой адрес
 Зачем нужна защита от отправления токена на нулевой адрес?
@@ -63,6 +71,8 @@
 ### 8. Добавление в метод `Index.destruct()` параметр `address gasReceiver`
 [https://github.com/tonlabs/True-NFT/blob/main/1.0/components/true-nft-content/src/Index.sol#L41](https://github.com/tonlabs/True-NFT/blob/main/1.0/components/true-nft-content/src/Index.sol#L41)
 Сделать возможность получать деньги после уничтожения индекса на любой адрес, а не только на контракт Data. В конечном итоге с контракта Data их также придётся выводить.
+
+В о
 
 ### 9. Вызов `Index.destruct()` с указанием `msg.value`
 [Пример вызова](https://github.com/tonlabs/True-NFT/blob/main/1.0/components/true-nft-content/src/Data.sol#L49)
