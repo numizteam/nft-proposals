@@ -25,7 +25,7 @@
 ### 2. Момент деплоя Index из контракта Data
 В какой момент деплоятся контракты Index из контракта Data? Другими словами, что считать моментом создания токена?
 Пример создания токена в TrueNFT:
-[https://github.com/tonlabs/True-NFT/blob/main/1.0/components/true-nft-content/src/Data.sol#L39]([https://github.com/tonlabs/True-NFT/blob/main/1.0/components/true-nft-content/src/Data.sol#L39). 
+[https://github.com/tonlabs/True-NFT/blob/main/1.0/components/true-nft-content/src/Data.sol#L39](https://github.com/tonlabs/True-NFT/blob/main/1.0/components/true-nft-content/src/Data.sol#L39). 
 Токен считается созданым только тогда, когда загружены все данные в Storage контракт. Только после этого деплоятся Index контракты
 
 ### 3. Отправка на нулевой адрес
