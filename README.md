@@ -117,4 +117,4 @@
 
 ## Визуализация взаимодействия между контрактами
 Контент показывает разные механики взаимодействия контрактов, в частности реализацию numiz и itgold, а также предложения по улучшению. Контент требует устного пояснения
-[Link](https://miro.com/welcomeonboard/R3hHSGtaRFlyTzFoNE1aeUVmRUVpUWR0bkg2MnBYTHBxWEZLME1HRndFWk1TVkhybHFxZmc3TnpMY1dnWkVoa3wzNDU4NzY0NTE2OTMyMjQ5NDg1?invite_link_id=387103488610)
+[Link](https://miro.com/app/board/uXjVOSBWElw=/?invite_link_id=50900177897)
